@@ -39,7 +39,7 @@ public class ATMSystem {
             }
         }
     }
-
+//登录
     private static void login(ArrayList<Account> accounts, Scanner sc) {
         System.out.println("==========系统登录操作==========");
         //判断是否存在账户，如果没有账户，无法登录
@@ -63,6 +63,7 @@ public class ATMSystem {
                         System.out.println("恭喜您，" + acc.getUserName() + "进入系统");
                         //展示用户登陆后的操作页面
                         showUserCommand(sc,acc,accounts);
+                        break;
                     }else{
                         System.out.println("对不起，您输入的密码有误");
                     }
@@ -124,25 +125,26 @@ public class ATMSystem {
 //修改密码方法
     private static void updatePassWord(Scanner sc, Account acc) {
         System.out.println("==========用户密码修改==========");
-        String passWord = sc.next();
+
         while (true) {
             System.out.println("请您输入当前密码");
+            String passWord = sc.next();
             //判断密码是否正确
-            if(acc.getPassWord() == passWord){
+            if(acc.getPassWord().equals(passWord)){
                 while (true) {
                     //密码正确，输入新密码
                     System.out.println("请您输入新密码");
                     String newPassWord = sc.next();
                     System.out.println("请您再次输入新密码");
                     String okNewPassWord = sc.next();
-                    if(newPassWord == okNewPassWord){
+                    if(newPassWord.equals(okNewPassWord)){
                         //两次密码一致，可以修改
                         acc.setPassWord(newPassWord);
                         System.out.println("恭喜您，您的密码修改成功");
                         return;
                     }else{
                         //不一致，重新输入
-                        System.out.println("您两次输入的密码不一致");
+                        System.out.println("您两次输入的密码不一致，请重新输入");
                     }
                 }
             }else{
@@ -152,7 +154,7 @@ public class ATMSystem {
         }
     }
 
-    //
+    //转账
     private static void transfermoney(Account acc, Scanner sc,ArrayList<Account> accounts) {
         System.out.println("==========用户转账操作==========");
         //判断是否有两个账户，满足转账条件
@@ -166,10 +168,11 @@ public class ATMSystem {
             System.out.println("对不起，您没钱");
             return;
         }
-        String cardId = sc.next();
+
         while (true) {
             //有钱，可以转账了
             System.out.println("请您输入对方账户的卡号");
+            String cardId = sc.next();
 
             //判断卡号是否存在
             Account account = getAccountByCardId(cardId,accounts);
@@ -182,17 +185,19 @@ public class ATMSystem {
                 System.out.println("请您输入["+ tip + "]的姓氏");
                 String preName = sc.next();
                 if(userName.startsWith(preName)){
-                    double money = sc.nextDouble();
+
                     while (true) {
                         //认证通过，开始转账
                         System.out.println("请您输入转账金额");
+                        double money = sc.nextDouble();
 
                         //判断余额是否足够
                         if(money > acc.getMoney()){
                             System.out.println("对不起，您没钱了，您最多可转账" + acc.getMoney() + "元");
                         }else{
-                            //足够，可以转载
-                            account.setMoney(acc.getMoney() + money);
+                            //足够，可以转
+                            account.setMoney(account.getMoney() + money);
+                            acc.setMoney(acc.getMoney() - money);
                             System.out.println("转账成功，您的余额为：" + acc.getMoney() + "元");
                             return;
                         }
@@ -274,7 +279,7 @@ public class ATMSystem {
         while (true) {
             System.out.println("请您输入账户密码");
             String passWord = sc.next();
-            System.out.println("请您输入账户密码");
+            System.out.println("请您再次输入账户密码");
             String okPassWord = sc.next();
             if (passWord.equals(okPassWord)){
                 //两次密码一致，录入密码
@@ -323,7 +328,7 @@ public class ATMSystem {
             }
         }
     }
-
+//通过卡号查找用户
     private static Account getAccountByCardId(String cardId,ArrayList<Account> accounts){
         for (int i = 0; i < accounts.size(); i++) {
             Account acc = accounts.get(i);
